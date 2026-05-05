@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel — Operations</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:#f5f6fa;color:#1a1d2e;-webkit-font-smoothing:antialiased}
+
+/* ── TOPBAR ── */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 40px;height:68px;background:#fff;
+  border-bottom:1px solid #ecedf3;position:sticky;top:0;z-index:100;
+  box-shadow:0 1px 4px rgba(0,0,0,.03);
+}
+.topbar-left{display:flex;align-items:center;gap:14px}
+.logo{
+  width:38px;height:38px;border-radius:10px;
+  background:linear-gradient(135deg,#635bff,#a78bfa);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 3px 12px rgba(99,91,255,.25);
+}
+.topbar h1{font-size:16px;font-weight:800;color:#1a1d2e;letter-spacing:-.3px}
+.topbar .sub{font-size:11px;color:#9ea4b8;display:block;margin-top:1px}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.pill{padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;display:flex;align-items:center;gap:6px;background:#fef3c7;color:#92400e;border:1px solid #fde68a}
+.btn-link{padding:7px 16px;border-radius:8px;font-size:12px;font-weight:600;color:#7c7f94;border:1.5px solid #e4e6ee;background:#fff;cursor:pointer;text-decoration:none;transition:all .2s}
+.btn-link:hover{border-color:#635bff;color:#635bff}
+
+/* ── LAYOUT ── */
+.page{max-width:1300px;margin:0 auto;padding:28px 40px 60px}
+.sec{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#b0b4c8;margin:28px 0 12px;display:flex;align-items:center;gap:10px}
+.sec::after{content:'';flex:1;height:1px;background:#ecedf3}
+.card{background:#fff;border:1px solid #ecedf3;border-radius:14px;padding:20px 24px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.03)}
+.row{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap}
+
+/* ── FORM ── */
+.fg{display:flex;flex-direction:column;gap:5px}
+.fg.wide{flex:1;min-width:200px}
+.fg label{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#9ea4b8}
+.fg input,.fg select,.fg textarea{
+  padding:10px 14px;border:1.5px solid #e4e6ee;border-radius:10px;
+  font:500 13px 'Inter',sans-serif;background:#fff;color:#1a1d2e;outline:none;
+  transition:border-color .2s,box-shadow .2s;
+}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:#635bff;box-shadow:0 0 0 3px rgba(99,91,255,.1)}
+.fg textarea{resize:vertical;min-height:60px}
+
+/* ── BUTTONS ── */
+.btn{padding:10px 22px;border:none;border-radius:10px;font:600 13px 'Inter',sans-serif;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{transform:translateY(-1px)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn-primary{background:linear-gradient(135deg,#635bff,#7c6cff);color:#fff;box-shadow:0 2px 10px rgba(99,91,255,.2)}
+.btn-primary:hover{box-shadow:0 4px 18px rgba(99,91,255,.3)}
+.btn-orange{background:linear-gradient(135deg,#d97706,#fbbf24);color:#fff;box-shadow:0 2px 10px rgba(217,119,6,.2)}
+.btn-green{background:linear-gradient(135deg,#16a34a,#4ade80);color:#fff;box-shadow:0 2px 10px rgba(22,163,74,.2)}
+.btn-red{background:#fef2f2;color:#dc2626;border:1px solid #fecaca;padding:6px 12px;font-size:12px;box-shadow:none}
+.btn-red:hover{background:#fee2e2}
+.btn-ghost{background:#fff;color:#7c7f94;border:1.5px solid #e4e6ee;padding:7px 14px;font-size:12px;box-shadow:none}
+.btn-ghost:hover{border-color:#635bff;color:#635bff}
+
+/* ── PANELS ── */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #f3f4f8}
+.panel-title{font-size:13px;font-weight:700;color:#1a1d2e;display:flex;align-items:center;gap:8px}
+.badge{font-size:8px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:3px 8px;border-radius:5px}
+.badge-sdk{background:#ede9fe;color:#6d28d9}
+.badge-edit{background:#fef3c7;color:#92400e}
+.sdk-table{width:100%;font-size:13px}
+.sdk-table tr{border-bottom:1px solid #f3f4f8}
+.sdk-table td{padding:9px 0}
+.sdk-table td:first-child{color:#9ea4b8;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.5px;width:130px}
+.sdk-table td:last-child{color:#1a1d2e;font-weight:500;text-align:right}
+.metric-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f3f4f8}
+.metric-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:#9ea4b8;width:130px;flex-shrink:0}
+.metric-input{
+  width:120px;padding:8px 10px;border:1.5px solid #e4e6ee;border-radius:8px;
+  font:500 13px 'Inter',sans-serif;background:#fff;color:#1a1d2e;outline:none;text-align:right;
+}
+.metric-input:focus{border-color:#635bff}
+.metric-unit{font-size:10px;color:#b0b4c8;width:50px;margin-left:4px}
+
+/* ── CHIPS ── */
+.proj-chip{
+  display:inline-flex;align-items:center;gap:8px;padding:7px 14px;
+  background:#f5f6fa;border:1px solid #ecedf3;border-radius:10px;
+  font-size:12px;font-weight:600;margin:4px;color:#1a1d2e;
+}
+.proj-chip .hash{color:#b0b4c8;font-size:10px}
+
+/* ── TABLE ── */
+.hist-wrap{background:#fff;border:1px solid #ecedf3;border-radius:14px;overflow-x:auto;box-shadow:0 1px 4px rgba(0,0,0,.03)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead{background:#fafbfe;border-bottom:2px solid #ecedf3}
+th{padding:12px 14px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#b0b4c8;text-align:left;white-space:nowrap}
+td{padding:11px 14px;border-top:1px solid #f3f4f8;color:#5e6278}
+td:first-child{min-width:100px}
+tbody tr{transition:background .15s}
+tbody tr:hover{background:#fafbfe}
+.empty{text-align:center;padding:40px;color:#b0b4c8;font-size:13px}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;padding:14px 28px;border-radius:12px;font:600 13px 'Inter',sans-serif;color:#fff;transform:translateY(100px);opacity:0;transition:all .3s;z-index:1000;box-shadow:0 8px 32px rgba(0,0,0,.12)}
+.toast.show{transform:translateY(0);opacity:1}
+.toast-ok{background:#16a34a}
+.toast-err{background:#dc2626}
+
+/* ── CUSTOM METRICS ── */
+.custom-row{display:flex;align-items:center;gap:8px;padding:5px 0}
+.custom-row input{flex:1;padding:8px 10px;border:1.5px solid #e4e6ee;border-radius:8px;font:500 13px 'Inter',sans-serif;background:#fff;color:#1a1d2e;outline:none}
+.custom-row input:focus{border-color:#635bff}
+
+.hidden{display:none!important}
+@media(max-width:900px){.split{grid-template-columns:1fr}.page{padding:20px 16px}.topbar{padding:0 16px}}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-left">
+    <div class="logo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></div>
+    <div><h1>Admin Panel</h1><span class="sub">Curate metrics before publishing</span></div>
+  </div>
+  <div class="topbar-right">
+    <span class="pill">🔒 Admin Only</span>
+    <a href="/client" class="btn-link" target="_blank">Client View →</a>
+  </div>
+</header>
+
+<main class="page">
+
+<div class="sec">MANAGE PROJECTS</div>
+<div class="card">
+  <div class="row" style="margin-bottom:14px">
+    <div class="fg" style="min-width:200px"><label>PROJECT NAME</label><input id="pn" placeholder="e.g. CTC Lung Nodules"></div>
+    <div class="fg" style="min-width:280px"><label>PROJECT HASH</label><input id="pkey" placeholder="e.g. 2a813775-341b-..."></div>
+    <button class="btn btn-primary" onclick="addProject()">+ Add Project</button>
+  </div>
+  <div id="projList"><span class="empty">No projects added yet</span></div>
+</div>
+
+<div class="sec">1 · SELECT PROJECT & FETCH SDK</div>
+<div class="card">
+  <div class="row">
+    <div class="fg wide"><label>PROJECT</label><select id="ph" onchange="loadHistory()"><option value="">— Add a project first —</option></select></div>
+    <div class="fg"><label>FROM</label><input type="date" id="df"></div>
+    <div class="fg"><label>TO</label><input type="date" id="dt"></div>
+    <button class="btn btn-primary" id="btnFetch" onclick="fetchSDK()">Fetch from SDK</button>
+  </div>
+</div>
+
+<div class="sec">2 · PREVIEW & EDIT</div>
+<div class="card" style="margin-bottom:8px">
+  <div class="row">
+    <div class="fg"><label>EDITING DATE</label><select id="sdkDateSelect" onchange="selectSDKDay()"><option value="">— Fetch SDK first —</option></select></div>
+    <button class="btn btn-orange" onclick="transferValues()">← Transfer SDK → Edit</button>
+    <button class="btn btn-green" onclick="saveToDb()">💾 Save to Dashboard</button>
+  </div>
+</div>
+<div class="split">
+  <div class="card">
+    <div class="panel-head"><span class="panel-title">📡 SDK Preview <span class="badge badge-sdk">Read Only</span></span></div>
+    <div id="sdk-preview"><div class="empty">📡 Fetch SDK data to preview</div></div>
+  </div>
+  <div class="card">
+    <div class="panel-head"><span class="panel-title">✏️ Editable Metrics <span class="badge badge-edit">Editable</span></span></div>
+    <div class="metric-row"><span class="metric-label">Annotators</span><input class="metric-input" type="number" id="e-annotators" value="0"><span class="metric-unit">people</span></div>
+    <div class="metric-row"><span class="metric-label">Tasks</span><input class="metric-input" type="number" id="e-tasks" value="0"><span class="metric-unit">tasks</span></div>
+    <div class="metric-row"><span class="metric-label">Time/Task</span><input class="metric-input" type="number" step="0.1" id="e-tpt" value="0"><span class="metric-unit">sec</span></div>
+    <div class="metric-row"><span class="metric-label">Ann. Time</span><input class="metric-input" type="number" step="0.1" id="e-ann" value="0"><span class="metric-unit">sec</span></div>
+    <div class="metric-row"><span class="metric-label">Video Dur.</span><input class="metric-input" type="number" step="0.1" id="e-vid" value="0"><span class="metric-unit">sec</span></div>
+    <div class="metric-row"><span class="metric-label">Ratio</span><input class="metric-input" type="number" step="0.01" id="e-ratio" value="0"><span class="metric-unit">×</span></div>
+    <div style="margin-top:14px;padding-top:10px;border-top:1px solid #f3f4f8">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <span style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#9ea4b8">Custom Metrics</span>
+        <button class="btn-ghost btn" onclick="addCustomMetric()">+ Add</button>
+      </div>
+      <div id="customMetrics"></div>
+    </div>
+    <div style="margin-top:14px;padding-top:10px;border-top:1px solid #f3f4f8">
+      <div class="fg"><label>NOTES</label><textarea id="e-notes" placeholder="Optional daily notes"></textarea></div>
+    </div>
+  </div>
+</div>
+
+<div class="sec">3 · SAVED HISTORY</div>
+<div class="card" style="margin-bottom:12px">
+  <div class="row" style="align-items:center">
+    <div style="flex:1">
+      <div style="font-size:14px;font-weight:700;color:#1a1d2e;display:flex;align-items:center;gap:8px">
+        📋 <span id="hist-project-name">Select a project</span>
+        <span style="font-size:10px;font-weight:600;color:#9ea4b8;background:#f5f6fa;padding:3px 10px;border-radius:6px" id="hist-entry-count">0 entries</span>
+      </div>
+    </div>
+    <div class="fg"><label>FROM</label><input type="date" id="hf"></div>
+    <div class="fg"><label>TO</label><input type="date" id="ht"></div>
+    <button class="btn btn-ghost" onclick="loadHistory()">Refresh</button>
+  </div>
+</div>
+<div class="hist-wrap">
+  <table><thead><tr><th>DATE</th><th>ANNOTATORS</th><th>TASKS</th><th>TPT</th><th>ANN. TIME</th><th>VIDEO DUR.</th><th>RATIO</th><th>NOTES</th><th>UPDATED</th><th>ACTIONS</th></tr></thead>
+  <tbody id="hist-tbody"><tr><td colspan="10" class="empty">Select a project</td></tr></tbody></table>
+</div>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API='';let sdkDaily=[],currentSDKDay=null;
+document.addEventListener('DOMContentLoaded',()=>{const n=new Date(),f=new Date();f.setDate(n.getDate()-30);document.getElementById('dt').value=fmt(n);document.getElementById('df').value=fmt(f);document.getElementById('ht').value=fmt(n);document.getElementById('hf').value=fmt(f);loadProjects()});
+function fmt(d){return d.toISOString().split('T')[0]}
+function fmtS(s){s=Math.round(s||0);if(s<60)return s+'s';let m=Math.floor(s/60),se=s%60;if(m<60)return m+'m '+se+'s';let h=Math.floor(m/60);m%=60;return h+'h '+m+'m '+se+'s'}
+
+async function loadProjects(){const r=await fetch(API+'/api/projects');const projects=await r.json();const sel=document.getElementById('ph');sel.innerHTML=projects.length?projects.map(p=>`<option value="${p.project_hash}">${p.name}</option>`).join(''):'<option value="">— Add a project first —</option>';const list=document.getElementById('projList');list.innerHTML=projects.length?projects.map(p=>`<span class="proj-chip">${p.name} <span class="hash">${p.project_hash.slice(0,8)}…</span> <button class="btn-red" style="padding:2px 8px;font-size:10px" onclick="delProject(${p.id})">×</button></span>`).join(''):'<span class="empty">No projects added</span>';loadHistory()}
+async function addProject(){const name=document.getElementById('pn').value.trim(),hash=document.getElementById('pkey').value.trim();if(!name||!hash){toast('Enter name and hash','err');return}const r=await fetch(API+'/api/projects',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,project_hash:hash})});const d=await r.json();if(!r.ok){toast(d.error,'err');return}document.getElementById('pn').value='';document.getElementById('pkey').value='';toast(name+' added ✓','ok');loadProjects()}
+async function delProject(id){if(!confirm('Remove?'))return;await fetch(API+'/api/projects/'+id,{method:'DELETE'});toast('Removed','ok');loadProjects()}
+
+async function fetchSDK(){const ph=document.getElementById('ph').value;if(!ph){toast('Select project','err');return}document.getElementById('btnFetch').disabled=true;document.getElementById('btnFetch').textContent='Fetching...';try{const r=await fetch(`${API}/api/sdk-preview?project_hash=${ph}&date_from=${document.getElementById('df').value}&date_to=${document.getElementById('dt').value}`);const d=await r.json();if(!r.ok)throw new Error(d.error);sdkDaily=d.daily||[];if(!sdkDaily.length){toast('No SDK data','err');return}const sel=document.getElementById('sdkDateSelect');sel.innerHTML=sdkDaily.map(day=>`<option value="${day.date}">${day.date} — ${day.tasks} tasks</option>`).join('');sel.value=sdkDaily[sdkDaily.length-1].date;selectSDKDay();toast(sdkDaily.length+' days loaded','ok')}catch(e){toast(e.message,'err')}finally{document.getElementById('btnFetch').disabled=false;document.getElementById('btnFetch').textContent='Fetch from SDK'}}
+function selectSDKDay(){const day=sdkDaily.find(d=>d.date===document.getElementById('sdkDateSelect').value);if(!day)return;currentSDKDay=day;document.getElementById('sdk-preview').innerHTML=`<table class="sdk-table"><tr><td>Date</td><td>${day.date}</td></tr><tr><td>Annotators</td><td>${day.active_annotators}</td></tr><tr><td>Tasks</td><td>${day.tasks}</td></tr><tr><td>Time/Task</td><td>${fmtS(day.tpt_seconds)} (${day.tpt_seconds}s)</td></tr><tr><td>Ann. Time</td><td>${fmtS(day.ann_time_seconds)} (${day.ann_time_seconds}s)</td></tr><tr><td>Video Dur.</td><td>${fmtS(day.vid_duration_seconds)} (${day.vid_duration_seconds}s)</td></tr><tr><td>Ratio</td><td>${day.ratio!=null?day.ratio+'×':'—'}</td></tr></table>`}
+function transferValues(){if(!currentSDKDay){toast('Select a day','err');return}document.getElementById('e-annotators').value=currentSDKDay.active_annotators||0;document.getElementById('e-tasks').value=currentSDKDay.tasks||0;document.getElementById('e-tpt').value=currentSDKDay.tpt_seconds||0;document.getElementById('e-ann').value=currentSDKDay.ann_time_seconds||0;document.getElementById('e-vid').value=currentSDKDay.vid_duration_seconds||0;document.getElementById('e-ratio').value=currentSDKDay.ratio||0;toast('Transferred ✓','ok')}
+
+function addCustomMetric(n='',v=''){const d=document.createElement('div');d.className='custom-row';d.innerHTML=`<input placeholder="Metric name" class="cm-name" value="${n}"><input placeholder="Value" class="cm-val" value="${v}"><button class="btn-red" style="padding:4px 10px" onclick="this.parentElement.remove()">×</button>`;document.getElementById('customMetrics').appendChild(d)}
+function getCustomMetrics(){const o={};document.querySelectorAll('.custom-row').forEach(r=>{const n=r.querySelector('.cm-name').value.trim(),v=r.querySelector('.cm-val').value.trim();if(n)o[n]=v});return o}
+function setCustomMetrics(o){document.getElementById('customMetrics').innerHTML='';Object.entries(o||{}).forEach(([k,v])=>addCustomMetric(k,v))}
+
+async function saveToDb(){const date=document.getElementById('sdkDateSelect').value;if(!date){toast('Select date','err');return}const ph=document.getElementById('ph').value;if(!ph){toast('Select project','err');return}const payload={project_hash:ph,date,active_annotators:parseInt(document.getElementById('e-annotators').value)||0,tasks:parseInt(document.getElementById('e-tasks').value)||0,tpt_seconds:parseFloat(document.getElementById('e-tpt').value)||0,ann_time_seconds:parseFloat(document.getElementById('e-ann').value)||0,vid_duration_seconds:parseFloat(document.getElementById('e-vid').value)||0,ratio:parseFloat(document.getElementById('e-ratio').value)||null,notes:document.getElementById('e-notes').value.trim(),custom_metrics:getCustomMetrics()};try{const r=await fetch(API+'/api/curated',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});if(!r.ok)throw new Error((await r.json()).error);toast('Saved '+date+' ✓','ok');loadHistory()}catch(e){toast(e.message,'err')}}
+
+async function loadHistory(){const ph=document.getElementById('ph').value;const sel=document.getElementById('ph');const pn=sel.selectedIndex>=0?sel.options[sel.selectedIndex].textContent:'No project';document.getElementById('hist-project-name').textContent=pn;if(!ph){document.getElementById('hist-entry-count').textContent='0 entries';document.getElementById('hist-tbody').innerHTML='<tr><td colspan="10" class="empty">Select a project</td></tr>';return}let url=`${API}/api/curated?project_hash=${ph}`;const hf=document.getElementById('hf').value,ht=document.getElementById('ht').value;if(hf)url+=`&date_from=${hf}`;if(ht)url+=`&date_to=${ht}`;const rows=await(await fetch(url)).json();document.getElementById('hist-entry-count').textContent=rows.length+(rows.length===1?' entry':' entries');if(!rows.length){document.getElementById('hist-tbody').innerHTML='<tr><td colspan="10" class="empty">No entries for '+pn+'</td></tr>';return}document.getElementById('hist-tbody').innerHTML=rows.map(r=>{const notes=(r.notes||'').slice(0,35);return`<tr><td style="font-weight:700;color:#1a1d2e">${r.date}</td><td>${r.active_annotators}</td><td>${r.tasks}</td><td>${r.tpt_raw}</td><td>${r.ann_time_raw}</td><td>${r.vid_duration_raw}</td><td>${r.ratio!=null?r.ratio+'×':'—'}</td><td style="font-size:11px;color:#9ea4b8;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.notes||''}">${notes||'—'}</td><td style="font-size:11px;color:#b0b4c8">${(r.updated_at||'').slice(0,16)}</td><td><div style="display:flex;gap:4px"><button class="btn-ghost btn" onclick='editRow(${JSON.stringify(r).replace(/'/g,"&#39;")})'>✏️</button><button class="btn-red" onclick="deleteRow(${r.id})">🗑</button></div></td></tr>`}).join('')}
+
+function editRow(r){const sel=document.getElementById('sdkDateSelect');let f=false;for(let o of sel.options)if(o.value===r.date){f=true;break}if(!f){const o=document.createElement('option');o.value=r.date;o.textContent=r.date+' (history)';sel.appendChild(o)}sel.value=r.date;document.getElementById('e-annotators').value=r.active_annotators;document.getElementById('e-tasks').value=r.tasks;document.getElementById('e-tpt').value=r.tpt_seconds;document.getElementById('e-ann').value=r.ann_time_seconds;document.getElementById('e-vid').value=r.vid_duration_seconds;document.getElementById('e-ratio').value=r.ratio||0;document.getElementById('e-notes').value=r.notes||'';setCustomMetrics(r.custom_metrics||{});toast('Editing '+r.date,'ok');window.scrollTo({top:300,behavior:'smooth'})}
+async function deleteRow(id){if(!confirm('Delete?'))return;await fetch(API+'/api/curated/'+id,{method:'DELETE'});toast('Deleted','ok');loadHistory()}
+function toast(msg,type){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show '+(type==='ok'?'toast-ok':'toast-err');setTimeout(()=>{t.className='toast'},3000)}
+</script>
+</body>
+</html>

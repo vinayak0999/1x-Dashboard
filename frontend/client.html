@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Operations Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:#f5f6fa;color:#1a1d2e;-webkit-font-smoothing:antialiased}
+
+/* ── TOPBAR ── */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 48px;height:72px;background:#fff;
+  border-bottom:1px solid #ecedf3;position:sticky;top:0;z-index:100;
+  box-shadow:0 1px 4px rgba(0,0,0,.03);
+}
+.topbar-left{display:flex;align-items:center;gap:18px}
+.brand{
+  width:42px;height:42px;border-radius:12px;
+  background:linear-gradient(135deg,#635bff,#a78bfa);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 3px 12px rgba(99,91,255,.25);
+}
+.brand-info h1{font-size:17px;font-weight:800;color:#1a1d2e;letter-spacing:-.3px}
+.brand-info span{font-size:12px;color:#9ea4b8;font-weight:500}
+.topbar-right{display:flex;align-items:center;gap:14px}
+.proj-select{
+  appearance:none;-webkit-appearance:none;
+  padding:9px 36px 9px 16px;border:1.5px solid #e4e6ee;border-radius:10px;
+  font:600 13px/1 'Inter',sans-serif;color:#1a1d2e;background:#fff url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%239ea4b8' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E") right 14px center no-repeat;
+  outline:none;cursor:pointer;min-width:220px;transition:all .2s;
+}
+.proj-select:focus{border-color:#635bff;box-shadow:0 0 0 3px rgba(99,91,255,.1)}
+.live-badge{
+  display:flex;align-items:center;gap:8px;padding:7px 16px;border-radius:40px;
+  background:#eefbf3;border:1px solid #c6f0d6;font-size:12px;font-weight:600;color:#1a8a4a;
+}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ── PAGE ── */
+.page{max-width:1260px;margin:0 auto;padding:36px 48px 60px}
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:36px}
+.page-header h2{font-size:24px;font-weight:800;color:#1a1d2e;letter-spacing:-.5px}
+.page-header-sub{font-size:13px;color:#9ea4b8;margin-top:4px}
+.page-header-date{font-size:13px;font-weight:600;color:#7c7f94;text-align:right}
+
+/* ── KPI CARDS ── */
+.kpi-section-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#b0b4c8;margin-bottom:18px}
+.kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:44px}
+.kpi{
+  background:#fff;border-radius:16px;overflow:hidden;
+  border:1px solid #ecedf3;
+  box-shadow:0 1px 4px rgba(0,0,0,.03),0 4px 20px rgba(0,0,0,.02);
+  transition:transform .3s,box-shadow .3s;
+}
+.kpi:hover{transform:translateY(-4px);box-shadow:0 6px 28px rgba(99,91,255,.08)}
+.kpi-header{padding:14px 20px 10px;position:relative}
+.kpi-header.purple{background:linear-gradient(135deg,#635bff,#a78bfa)}
+.kpi-header.blue{background:linear-gradient(135deg,#3b82f6,#60a5fa)}
+.kpi-header.amber{background:linear-gradient(135deg,#d97706,#fbbf24)}
+.kpi-header.green{background:linear-gradient(135deg,#16a34a,#4ade80)}
+.kpi-header.rose{background:linear-gradient(135deg,#e11d48,#fb7185)}
+.kpi-header.indigo{background:linear-gradient(135deg,#4f46e5,#818cf8)}
+.kpi-header-title{font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.9)}
+.kpi-header-icon{position:absolute;top:12px;right:16px;width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:15px}
+.kpi-body{padding:18px 20px 16px}
+.kpi-value{font-size:32px;font-weight:900;letter-spacing:-1.5px;line-height:1;color:#1a1d2e}
+.kpi-sub{font-size:12px;color:#9ea4b8;margin-top:8px;font-weight:500}
+
+/* ── CHARTS ── */
+.charts-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#b0b4c8;margin-bottom:18px}
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.chart-card{
+  background:#fff;border:1px solid #ecedf3;border-radius:16px;
+  padding:26px 28px 20px;
+  box-shadow:0 1px 4px rgba(0,0,0,.03),0 4px 20px rgba(0,0,0,.02);
+  transition:box-shadow .3s;
+}
+.chart-card:hover{box-shadow:0 4px 20px rgba(99,91,255,.06)}
+.chart-card.wide{grid-column:1/-1}
+.chart-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.chart-title{font-size:14px;font-weight:700;color:#1a1d2e}
+.chart-tag{font-size:9px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;padding:4px 10px;border-radius:6px}
+.tag-purple{background:#ede9fe;color:#6d28d9}
+.tag-amber{background:#fef3c7;color:#92400e}
+.tag-green{background:#dcfce7;color:#15803d}
+.tag-rose{background:#ffe4e6;color:#9f1239}
+.tag-blue{background:#dbeafe;color:#1e40af}
+.chart-desc{font-size:12px;color:#9ea4b8;margin-bottom:18px}
+.chart-wrap{position:relative;height:210px}
+
+/* ── STATES ── */
+.center-state{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:70vh;gap:18px;text-align:center}
+.center-state h2{font-size:22px;font-weight:700;color:#1a1d2e}
+.center-state p{font-size:14px;color:#7c7f94;max-width:380px;line-height:1.6}
+.spinner{width:40px;height:40px;border:3px solid #ede9fe;border-top-color:#635bff;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty-icon{width:72px;height:72px;border-radius:20px;background:#f5f3ff;display:flex;align-items:center;justify-content:center;font-size:32px}
+.hidden{display:none!important}
+@media(max-width:900px){.kpi-grid{grid-template-columns:repeat(2,1fr)}.charts-grid{grid-template-columns:1fr}.chart-card.wide{grid-column:auto}.page{padding:24px 20px}.topbar{padding:0 20px}}
+@media(max-width:500px){.kpi-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-left">
+    <div class="brand"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg></div>
+    <div class="brand-info"><h1 id="project-name">Loading…</h1><span>Operations Dashboard</span></div>
+  </div>
+  <div class="topbar-right">
+    <select class="proj-select" id="project-select" onchange="switchProject()"></select>
+    <div class="live-badge"><span class="live-dot"></span><span id="updated-at">Syncing…</span></div>
+  </div>
+</header>
+
+<div class="center-state" id="state-loading"><div class="spinner"></div><h2>Loading Dashboard</h2><p>Pulling the latest project metrics.</p></div>
+<div class="center-state hidden" id="state-empty"><div class="empty-icon">📊</div><h2>Data Coming Soon</h2><p>Daily metrics are being prepared by the operations team. Please check back shortly.</p></div>
+
+<main class="page hidden" id="main">
+  <div class="page-header">
+    <div><h2 id="main-title">Performance Overview</h2><div class="page-header-sub">All-time aggregated metrics &amp; daily trends</div></div>
+    <div class="page-header-date" id="header-date"></div>
+  </div>
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-header purple"><div class="kpi-header-title">Active Annotators</div><div class="kpi-header-icon">👥</div></div><div class="kpi-body"><div class="kpi-value" id="t-ann">—</div><div class="kpi-sub">Peak annotators</div></div></div>
+    <div class="kpi"><div class="kpi-header blue"><div class="kpi-header-title">Tasks Completed</div><div class="kpi-header-icon">✅</div></div><div class="kpi-body"><div class="kpi-value" id="t-tasks">—</div><div class="kpi-sub">All-time total</div></div></div>
+    <div class="kpi"><div class="kpi-header amber"><div class="kpi-header-title">Avg. Time per Task</div><div class="kpi-header-icon">⏱</div></div><div class="kpi-body"><div class="kpi-value" id="t-tpt">—</div><div class="kpi-sub" id="t-tpt-s">Across all days</div></div></div>
+    <div class="kpi"><div class="kpi-header green"><div class="kpi-header-title">Total Annotation Time</div><div class="kpi-header-icon">⏳</div></div><div class="kpi-body"><div class="kpi-value" id="t-at">—</div><div class="kpi-sub" id="t-at-s">Cumulative</div></div></div>
+    <div class="kpi"><div class="kpi-header rose"><div class="kpi-header-title">Total Video Duration</div><div class="kpi-header-icon">🎬</div></div><div class="kpi-body"><div class="kpi-value" id="t-vid">—</div><div class="kpi-sub" id="t-vid-s">Content covered</div></div></div>
+    <div class="kpi"><div class="kpi-header indigo"><div class="kpi-header-title">Efficiency Ratio</div><div class="kpi-header-icon">📐</div></div><div class="kpi-body"><div class="kpi-value" id="t-ratio">—</div><div class="kpi-sub">Ann. time ÷ video</div></div></div>
+  </div>
+  <div class="charts-label">Daily Trends — Last 30 Days</div>
+  <div class="charts-grid">
+    <div class="chart-card wide"><div class="chart-head"><span class="chart-title">Tasks Completed</span><span class="chart-tag tag-purple">Volume</span></div><div class="chart-desc">Unique annotations completed per day</div><div class="chart-wrap"><canvas id="c-tasks"></canvas></div></div>
+    <div class="chart-card"><div class="chart-head"><span class="chart-title">Time per Task</span><span class="chart-tag tag-amber">TPT</span></div><div class="chart-desc">Average minutes per annotation</div><div class="chart-wrap"><canvas id="c-tpt"></canvas></div></div>
+    <div class="chart-card"><div class="chart-head"><span class="chart-title">Active Annotators</span><span class="chart-tag tag-rose">Team</span></div><div class="chart-desc">Team members working daily</div><div class="chart-wrap"><canvas id="c-ann"></canvas></div></div>
+    <div class="chart-card"><div class="chart-head"><span class="chart-title">Video Duration</span><span class="chart-tag tag-green">Coverage</span></div><div class="chart-desc">Minutes of content annotated</div><div class="chart-wrap"><canvas id="c-vid"></canvas></div></div>
+    <div class="chart-card"><div class="chart-head"><span class="chart-title">Efficiency Ratio</span><span class="chart-tag tag-blue">Quality</span></div><div class="chart-desc">Annotation time ÷ video duration</div><div class="chart-wrap"><canvas id="c-ratio"></canvas></div></div>
+  </div>
+</main>
+
+<script>
+let PH=new URLSearchParams(location.search).get('project')||'';
+const C={};
+function show(s){['state-loading','state-empty','main'].forEach(id=>document.getElementById(id).classList.add('hidden'));document.getElementById(s==='main'?'main':'state-'+s).classList.remove('hidden')}
+async function loadProjects(){
+  const ps=await(await fetch('/api/projects')).json();const sel=document.getElementById('project-select');
+  if(!ps.length){sel.innerHTML='<option>No projects</option>';show('empty');return}
+  sel.innerHTML=ps.map(p=>`<option value="${p.project_hash}"${p.project_hash===PH?' selected':''}>${p.name}</option>`).join('');
+  if(!PH){PH=ps[0].project_hash;sel.value=PH}
+}
+function switchProject(){PH=document.getElementById('project-select').value;if(PH)loadData()}
+const CF={responsive:true,maintainAspectRatio:false,animation:{duration:700,easing:'easeOutQuart'},
+  plugins:{legend:{display:false},tooltip:{backgroundColor:'#fff',titleColor:'#1a1d2e',bodyColor:'#7c7f94',titleFont:{family:'Inter',weight:'700',size:13},bodyFont:{family:'Inter',size:12},padding:14,cornerRadius:10,displayColors:false,mode:'index',intersect:false,borderColor:'#ecedf3',borderWidth:1}},
+  scales:{x:{grid:{display:false},ticks:{font:{family:'Inter',size:10,weight:'600'},color:'#b0b4c8',maxRotation:0}},y:{grid:{color:'#f3f4f8',drawBorder:false},ticks:{font:{family:'Inter',size:10,weight:'600'},color:'#b0b4c8',padding:10},border:{display:false}}}};
+function mk(id,labels,data,color,label){
+  if(C[id])C[id].destroy();const ctx=document.getElementById(id)?.getContext('2d');if(!ctx)return;
+  const g=ctx.createLinearGradient(0,0,0,210);g.addColorStop(0,color+'20');g.addColorStop(1,color+'00');
+  C[id]=new Chart(ctx,{type:'line',data:{labels,datasets:[{data,borderColor:color,backgroundColor:g,borderWidth:2.5,pointRadius:0,pointHoverRadius:6,pointHoverBackgroundColor:color,pointHoverBorderColor:'#fff',pointHoverBorderWidth:3,fill:true,tension:.35}]},
+    options:{...CF,plugins:{...CF.plugins,tooltip:{...CF.plugins.tooltip,callbacks:{label:c=>`${label}: ${c.parsed.y}`}}}}});
+}
+function fD(d){const[,m,day]=d.split('-');return`${parseInt(day)} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][parseInt(m)-1]}`}
+async function loadData(){
+  show('loading');
+  try{
+    const d=await(await fetch(`/api/client-daily?project_hash=${PH}&days=30`)).json();
+    const daily=d.daily||[];
+    if(!daily.length){const s=document.getElementById('project-select');if(s.selectedIndex>=0)document.getElementById('project-name').textContent=s.options[s.selectedIndex].textContent;document.getElementById('updated-at').textContent='Awaiting data';show('empty');return}
+    document.getElementById('project-name').textContent=d.project_title||'Dashboard';
+    const now=new Date(d.generated_at);
+    document.getElementById('updated-at').textContent='Live · '+now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    document.getElementById('header-date').textContent=now.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+    const t=d.all_time||{};
+    document.getElementById('t-ann').textContent=t.active_annotators??'—';
+    document.getElementById('t-tasks').textContent=t.tasks??'—';
+    document.getElementById('t-tpt').textContent=t.tpt_raw||'—';
+    document.getElementById('t-tpt-s').textContent=`${t.tpt_mins??0} min avg`;
+    document.getElementById('t-at').textContent=t.ann_time_raw||'—';
+    document.getElementById('t-at-s').textContent=`${t.ann_time_mins??0} min total`;
+    document.getElementById('t-vid').textContent=t.vid_duration_raw||'—';
+    document.getElementById('t-vid-s').textContent=`${t.vid_duration_mins??0} min`;
+    document.getElementById('t-ratio').textContent=t.ratio!=null?t.ratio+'×':'—';
+    const L=daily.map(x=>fD(x.date));
+    mk('c-tasks',L,daily.map(x=>x.tasks),'#635bff','Tasks');
+    mk('c-tpt',L,daily.map(x=>x.tpt_mins),'#d97706','TPT (min)');
+    mk('c-ann',L,daily.map(x=>x.active_annotators),'#e11d48','Annotators');
+    mk('c-vid',L,daily.map(x=>x.vid_duration_mins),'#16a34a','Duration (min)');
+    mk('c-ratio',L,daily.map(x=>x.ratio),'#4f46e5','Ratio');
+    show('main');
+  }catch(e){show('empty')}
+}
+loadProjects().then(()=>{if(PH)loadData();else show('empty')});
+setInterval(()=>{if(PH)loadData()},600000);
+</script>
+</body>
+</html>
