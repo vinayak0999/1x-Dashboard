@@ -1,9 +1,7 @@
 encord
 fastapi
 uvicorn
-encord
 python-dotenv
-sqlalchemy
+psycopg2-binary
 numpy
 APScheduler>=3.10
-
