@@ -52,7 +52,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:#f5f6fa;color:#1a1d2e;-
 .kpi-section-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#b0b4c8;margin-bottom:18px}
 .kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:44px}
 .kpi{
-  background:#fff;border-radius:16px;overflow:hidden;
+  background:#fff;border-radius:16px;overflow:visible;
   border:1px solid #ecedf3;
   box-shadow:0 1px 4px rgba(0,0,0,.03),0 4px 20px rgba(0,0,0,.02);
   transition:transform .3s,box-shadow .3s;
@@ -65,11 +65,32 @@ body{font-family:'Inter',system-ui,sans-serif;background:#f5f6fa;color:#1a1d2e;-
 .kpi-header.green{background:linear-gradient(135deg,#16a34a,#4ade80)}
 .kpi-header.rose{background:linear-gradient(135deg,#e11d48,#fb7185)}
 .kpi-header.indigo{background:linear-gradient(135deg,#4f46e5,#818cf8)}
+.kpi-header{border-radius:16px 16px 0 0}
 .kpi-header-title{font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.9)}
 .kpi-header-icon{position:absolute;top:12px;right:16px;width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:15px}
 .kpi-body{padding:18px 20px 16px}
 .kpi-value{font-size:32px;font-weight:900;letter-spacing:-1.5px;line-height:1;color:#1a1d2e}
 .kpi-sub{font-size:12px;color:#9ea4b8;margin-top:8px;font-weight:500}
+.kpi-explain{font-size:11px;color:#7c7f94;margin-top:6px;line-height:1.5;padding-top:8px;border-top:1px solid #f0f1f5}
+
+/* Info tooltip */
+.info-tip{position:relative;display:inline-flex;cursor:help;margin-left:6px;vertical-align:middle}
+.info-tip .info-icon{width:16px;height:16px;border-radius:50%;background:rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;line-height:1;font-style:normal}
+.info-tip .info-box{display:none;position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%);width:280px;padding:14px 16px;background:#1a1d2e;color:#fff;font-size:12px;font-weight:400;line-height:1.6;border-radius:10px;z-index:500;box-shadow:0 8px 30px rgba(0,0,0,.25);letter-spacing:0;text-transform:none}
+.info-tip .info-box::before{content:'';position:absolute;bottom:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-bottom-color:#1a1d2e}
+.info-tip:hover .info-box{display:block}
+
+/* Chart info tooltip */
+.chart-info-tip{position:relative;display:inline-flex;cursor:help;margin-left:8px}
+.chart-info-tip .chart-info-icon{width:20px;height:20px;border-radius:50%;background:#f0f1f5;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#7c7f94;line-height:1;transition:all .2s}
+.chart-info-tip:hover .chart-info-icon{background:#635bff;color:#fff}
+.chart-info-tip .chart-info-box{display:none;position:absolute;top:calc(100% + 10px);right:0;width:320px;padding:16px 18px;background:#1a1d2e;color:#fff;font-size:12px;font-weight:400;line-height:1.6;border-radius:12px;z-index:500;box-shadow:0 8px 30px rgba(0,0,0,.25)}
+.chart-info-tip .chart-info-box::before{content:'';position:absolute;bottom:100%;right:12px;border:6px solid transparent;border-bottom-color:#1a1d2e}
+.chart-info-tip:hover .chart-info-box{display:block}
+.chart-info-box strong{color:#a78bfa;font-weight:600;display:block;margin-bottom:6px;font-size:13px}
+.chart-info-box .axis-info{margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.15)}
+.chart-info-box .axis-info span{display:block;font-size:11px;color:rgba(255,255,255,.7);margin-bottom:3px}
+.chart-info-box .insight{margin-top:8px;font-size:11px;color:#a5b4fc;font-style:italic}
 
 /* ── CHARTS ── */
 .charts-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#b0b4c8;margin-bottom:18px}
@@ -83,6 +104,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:#f5f6fa;color:#1a1d2e;-
 .chart-card:hover{box-shadow:0 4px 20px rgba(99,91,255,.06)}
 .chart-card.wide{grid-column:1/-1}
 .chart-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.chart-title-wrap{display:flex;align-items:center}
 .chart-title{font-size:14px;font-weight:700;color:#1a1d2e}
 .chart-tag{font-size:9px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;padding:4px 10px;border-radius:6px}
 .tag-purple{background:#ede9fe;color:#6d28d9}
@@ -127,20 +149,69 @@ body{font-family:'Inter',system-ui,sans-serif;background:#f5f6fa;color:#1a1d2e;-
     <div class="page-header-date" id="header-date"></div>
   </div>
   <div class="kpi-grid">
-    <div class="kpi"><div class="kpi-header purple"><div class="kpi-header-title">Active Annotators</div><div class="kpi-header-icon">👥</div></div><div class="kpi-body"><div class="kpi-value" id="t-ann">—</div><div class="kpi-sub">Peak annotators</div></div></div>
-    <div class="kpi"><div class="kpi-header blue"><div class="kpi-header-title">Tasks Completed</div><div class="kpi-header-icon">✅</div></div><div class="kpi-body"><div class="kpi-value" id="t-tasks">—</div><div class="kpi-sub">All-time total</div></div></div>
-    <div class="kpi"><div class="kpi-header amber"><div class="kpi-header-title">Avg. Time per Task</div><div class="kpi-header-icon">⏱</div></div><div class="kpi-body"><div class="kpi-value" id="t-tpt">—</div><div class="kpi-sub" id="t-tpt-s">Across all days</div></div></div>
-    <div class="kpi"><div class="kpi-header green"><div class="kpi-header-title">Total Annotation Time</div><div class="kpi-header-icon">⏳</div></div><div class="kpi-body"><div class="kpi-value" id="t-at">—</div><div class="kpi-sub" id="t-at-s">Cumulative</div></div></div>
-    <div class="kpi"><div class="kpi-header rose"><div class="kpi-header-title">Total Video Duration</div><div class="kpi-header-icon">🎬</div></div><div class="kpi-body"><div class="kpi-value" id="t-vid">—</div><div class="kpi-sub" id="t-vid-s">Content covered</div></div></div>
-    <div class="kpi"><div class="kpi-header indigo"><div class="kpi-header-title">Efficiency Ratio</div><div class="kpi-header-icon">📐</div></div><div class="kpi-body"><div class="kpi-value" id="t-ratio">—</div><div class="kpi-sub">Ann. time ÷ video</div></div></div>
+    <div class="kpi"><div class="kpi-header rose"><div class="kpi-header-title">Video Duration <span class="info-tip"><span class="info-icon">i</span><span class="info-box">Total video duration of all tasks annotated since the project began.</span></span></div></div><div class="kpi-body"><div class="kpi-value" id="t-vid">—</div><div class="kpi-sub" id="t-vid-s">Cumulative content processed</div></div></div>
+    <div class="kpi"><div class="kpi-header indigo"><div class="kpi-header-title">Ratio <span class="info-tip"><span class="info-icon">i</span><span class="info-box">Total Annotation Time ÷ Total Video Duration across the project.</span></span></div></div><div class="kpi-body"><div class="kpi-value" id="t-ratio">—</div><div class="kpi-sub">Annotation Time ÷ Video Duration</div></div></div>
+    <div class="kpi"><div class="kpi-header blue"><div class="kpi-header-title">Total Tasks Annotated <span class="info-tip"><span class="info-icon">i</span><span class="info-box">Total number of tasks annotated since the project began.</span></span></div></div><div class="kpi-body"><div class="kpi-value" id="t-tasks">—</div><div class="kpi-sub">All-time completed</div></div></div>
+    <div class="kpi"><div class="kpi-header amber"><div class="kpi-header-title">Time per Task (TPT) <span class="info-tip"><span class="info-icon">i</span><span class="info-box">Average time to annotate one task, calculated across the entire project.</span></span></div></div><div class="kpi-body"><div class="kpi-value" id="t-tpt">—</div><div class="kpi-sub" id="t-tpt-s">Weighted average</div></div></div>
+    <div class="kpi"><div class="kpi-header green"><div class="kpi-header-title">Total Annotation Time <span class="info-tip"><span class="info-icon">i</span><span class="info-box">Total working time logged in the labelling tool since the project began.</span></span></div></div><div class="kpi-body"><div class="kpi-value" id="t-at">—</div><div class="kpi-sub" id="t-at-s">Cumulative effort</div></div></div>
+    <div class="kpi"><div class="kpi-header purple"><div class="kpi-header-title">Number of Active Annotators <span class="info-tip"><span class="info-icon">i</span><span class="info-box">Peak number of annotators active on any single day across the project.</span></span></div></div><div class="kpi-body"><div class="kpi-value" id="t-ann">—</div><div class="kpi-sub">Peak daily headcount</div></div></div>
   </div>
   <div class="charts-label">Daily Trends — Last 30 Days</div>
   <div class="charts-grid">
-    <div class="chart-card wide"><div class="chart-head"><span class="chart-title">Tasks Completed</span><span class="chart-tag tag-purple">Volume</span></div><div class="chart-desc">Unique annotations completed per day</div><div class="chart-wrap"><canvas id="c-tasks"></canvas></div></div>
-    <div class="chart-card"><div class="chart-head"><span class="chart-title">Time per Task</span><span class="chart-tag tag-amber">TPT</span></div><div class="chart-desc">Average minutes per annotation</div><div class="chart-wrap"><canvas id="c-tpt"></canvas></div></div>
-    <div class="chart-card"><div class="chart-head"><span class="chart-title">Active Annotators</span><span class="chart-tag tag-rose">Team</span></div><div class="chart-desc">Team members working daily</div><div class="chart-wrap"><canvas id="c-ann"></canvas></div></div>
-    <div class="chart-card"><div class="chart-head"><span class="chart-title">Video Duration</span><span class="chart-tag tag-green">Coverage</span></div><div class="chart-desc">Minutes of content annotated</div><div class="chart-wrap"><canvas id="c-vid"></canvas></div></div>
-    <div class="chart-card"><div class="chart-head"><span class="chart-title">Efficiency Ratio</span><span class="chart-tag tag-blue">Quality</span></div><div class="chart-desc">Annotation time ÷ video duration</div><div class="chart-wrap"><canvas id="c-ratio"></canvas></div></div>
+    <div class="chart-card wide">
+      <div class="chart-head">
+        <span class="chart-title-wrap"><span class="chart-title">Video Duration per Day</span>
+          <span class="chart-info-tip"><span class="chart-info-icon">i</span><span class="chart-info-box"><strong>Video Duration per Day</strong>Total video duration of all tasks annotated each day.<div class="axis-info"><span><b>X-axis:</b> Dates</span><span><b>Y-axis:</b> Minutes of video duration</span></div><div class="insight">Higher values indicate more content was processed. Spikes may reflect batch uploads or increased capacity.</div></span></span>
+        </span><span class="chart-tag tag-rose">Coverage</span>
+      </div>
+      <div class="chart-desc">This graph shows the total minutes of content annotated per day. Helps track annotation coverage over time.</div>
+      <div class="chart-wrap"><canvas id="c-vid"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-head">
+        <span class="chart-title-wrap"><span class="chart-title">Ratio per Day</span>
+          <span class="chart-info-tip"><span class="chart-info-icon">i</span><span class="chart-info-box"><strong>Ratio (Annotation Time ÷ Video Duration)</strong>Shows how many minutes of annotation work were needed per minute of video duration each day.<div class="axis-info"><span><b>X-axis:</b> Dates</span><span><b>Y-axis:</b> Ratio value</span></div><div class="insight">A ratio of 4× means each minute of video took 4 minutes to label. A decreasing trend means efficiency is improving.</div></span></span>
+        </span><span class="chart-tag tag-blue">Efficiency</span>
+      </div>
+      <div class="chart-desc">Annotation Time ÷ Video Duration. Shows how many minutes of work are needed per minute of video duration each day.</div>
+      <div class="chart-wrap"><canvas id="c-ratio"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-head">
+        <span class="chart-title-wrap"><span class="chart-title">Tasks Annotated per Day</span>
+          <span class="chart-info-tip"><span class="chart-info-icon">i</span><span class="chart-info-box"><strong>Tasks Annotated per Day</strong>Number of individual tasks (images, video clips, audio segments) annotated each day.<div class="axis-info"><span><b>X-axis:</b> Dates</span><span><b>Y-axis:</b> Number of tasks annotated</span></div><div class="insight">The trend shows daily productivity and highlights variations in workload and output over time.</div></span></span>
+        </span><span class="chart-tag tag-purple">Volume</span>
+      </div>
+      <div class="chart-desc">This graph represents the number of unique annotation tasks completed per day since the beginning of the project.</div>
+      <div class="chart-wrap"><canvas id="c-tasks"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-head">
+        <span class="chart-title-wrap"><span class="chart-title">Time per Task (TPT) per Day</span>
+          <span class="chart-info-tip"><span class="chart-info-icon">i</span><span class="chart-info-box"><strong>Time per Task (TPT)</strong>Average time to annotate one task each day. Calculated as that day's Total Annotation Time ÷ Number of Tasks.<div class="axis-info"><span><b>X-axis:</b> Dates</span><span><b>Y-axis:</b> Average time per task (minutes)</span></div><div class="insight">Higher values may indicate complex tasks. Lower values reflect improved speed. Target is to reduce this over time.</div></span></span>
+        </span><span class="chart-tag tag-amber">Speed</span>
+      </div>
+      <div class="chart-desc">This graph shows the average time taken (in minutes) to complete each annotation task per day. Helps track efficiency trends over time.</div>
+      <div class="chart-wrap"><canvas id="c-tpt"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-head">
+        <span class="chart-title-wrap"><span class="chart-title">Total Annotation Time per Day</span>
+          <span class="chart-info-tip"><span class="chart-info-icon">i</span><span class="chart-info-box"><strong>Total Annotation Time per Day</strong>Total time the team spent annotating tasks each day. This is the actual working time logged in the labelling tool.<div class="axis-info"><span><b>X-axis:</b> Dates</span><span><b>Y-axis:</b> Total annotation time (minutes)</span></div><div class="insight">Tracks team effort over time. Combined with tasks completed, it helps calculate productivity trends.</div></span></span>
+        </span><span class="chart-tag tag-green">Effort</span>
+      </div>
+      <div class="chart-desc">Total time the team spent annotating tasks each day. This is the actual working time logged in the labelling tool.</div>
+      <div class="chart-wrap"><canvas id="c-at"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-head">
+        <span class="chart-title-wrap"><span class="chart-title">Active Annotators per Day</span>
+          <span class="chart-info-tip"><span class="chart-info-icon">i</span><span class="chart-info-box"><strong>Active Annotators per Day</strong>Number of annotators who worked on tasks each day.<div class="axis-info"><span><b>X-axis:</b> Dates</span><span><b>Y-axis:</b> Number of active annotators</span></div><div class="insight">Variations may reflect shift scheduling, workload distribution, or resource allocation changes.</div></span></span>
+        </span><span class="chart-tag tag-rose">Team Size</span>
+      </div>
+      <div class="chart-desc">This graph represents the number of team members actively working on tasks each day. Helps track team participation and workforce availability.</div>
+      <div class="chart-wrap"><canvas id="c-ann"></canvas></div>
+    </div>
   </div>
 </main>
 
@@ -186,11 +257,12 @@ async function loadData(){
     document.getElementById('t-vid-s').textContent=`${t.vid_duration_mins??0} min`;
     document.getElementById('t-ratio').textContent=t.ratio!=null?t.ratio+'×':'—';
     const L=daily.map(x=>fD(x.date));
+    mk('c-vid',L,daily.map(x=>x.vid_duration_mins),'#e11d48','Video Duration (min)');
+    mk('c-ratio',L,daily.map(x=>x.ratio),'#4f46e5','Ratio');
     mk('c-tasks',L,daily.map(x=>x.tasks),'#635bff','Tasks');
     mk('c-tpt',L,daily.map(x=>x.tpt_mins),'#d97706','TPT (min)');
-    mk('c-ann',L,daily.map(x=>x.active_annotators),'#e11d48','Annotators');
-    mk('c-vid',L,daily.map(x=>x.vid_duration_mins),'#16a34a','Duration (min)');
-    mk('c-ratio',L,daily.map(x=>x.ratio),'#4f46e5','Ratio');
+    mk('c-at',L,daily.map(x=>x.ann_time_mins),'#16a34a','Annotation Time (min)');
+    mk('c-ann',L,daily.map(x=>x.active_annotators),'#9333ea','Annotators');
     show('main');
   }catch(e){show('empty')}
 }
